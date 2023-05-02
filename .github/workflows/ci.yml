@@ -3,23 +3,23 @@ on:
   pull_request:
   workflow_dispatch:
 
-  jobs:
-    Build:
-      strategy:
-        matrix:
-          os: [ windows, macos, ubuntu ]
-          jvm: [ 11, 17, 18 ]
-      runs-on: ${{ matrix.os }}-latest
+jobs:
+  Build:
+    strategy:
+      matrix:
+        os: [ windows, macos, ubuntu ]
+        jvm: [ 11, 17, 18 ]
+    runs-on: ${{ matrix.os }}-latest
 
-      steps:
-        - name: Checkout
-          uses: DanySK/action-checkout@0.2.9
+    steps:
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.9
 
-    CI-Complete:
-      needs: [ Build ]
-      runs-on: ubuntu-latest
-      timeout-minutes: 5
-      if: ${{ always() && !contains(join(needs.*.result, ','), 'cancelled') && !contains(join(needs.*.result, ','), 'skipped') }}
-      steps:
-        - run: echo "jobs resulted in ${{ join(needs.*.result, ',') }}"
-        - run: ${{ !contains(join(needs.*.result, ','), 'failure') }}
+  CI-Complete:
+    needs: [ Build ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ always() && !contains(join(needs.*.result, ','), 'cancelled') && !contains(join(needs.*.result, ','), 'skipped') }}
+    steps:
+      - run: echo "jobs resulted in ${{ join(needs.*.result, ',') }}"
+      - run: ${{ !contains(join(needs.*.result, ','), 'failure') }}
